@@ -1,33 +1,9 @@
-import { useReducer } from 'react'
 import './App.css'
-
-const initialState = {
-  fromLanguage: 'es',
-  toLanguaje: 'en',
-  fromtext: '',
-  result: '',
-  loading: false
-}
-
-const reducer = (state, action) => {
-  console.log(state, action)
-
-  if (action.type === 'INTERCHANGE_LANGUAGES') {
-    return {
-      ...initialState,
-      fromLanguage: state.toLanguaje,
-      toLanguaje: state.fromLanguage
-    }
-  }
-}
+import { SUPPORTED_LANGUAGES } from './constants'
+import { useStore } from './hooks/useStore'
 
 function App () {
-  const [state, dispatch] = useReducer(reducer, initialState)
-
-  console.log(state)
-  const setLanguage = () => {
-    dispatch({ payload: state, type: 'INTERCHANGE_LANGUAGES' })
-  }
+  const { fromLanguage, setFromLanguage } = useStore()
 
   return (
     <>
@@ -39,15 +15,15 @@ function App () {
       <main>
         <section className="flex justify-center my-5">
           <button
-            onClick={setLanguage}
+            onClick={() => { setFromLanguage('es') }}
             className="border p-2 bg-blue-600 text-white"
           >
-            {' '}
-            change Idiom
+
+            change to spanish
           </button>
           <div>
-            <h2>{state?.fromLanguage}</h2>
-            <h2>{state?.toLanguaje}</h2>
+            <h2>{fromLanguage}</h2>
+
           </div>
         </section>
       </main>
