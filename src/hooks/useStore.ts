@@ -9,7 +9,7 @@ import { AUTO_LANGUAGE } from '../constants'
 
 const initialState = {
   fromLanguage: 'auto',
-  toLanguaje: 'en',
+  toLanguage: 'en',
   fromtext: '',
   result: '',
   loading: false
@@ -24,31 +24,42 @@ const reducer = (state: State, action: Action) => {
 
     return {
       ...state,
-      fromLanguage: state.toLanguaje,
-      toLanguaje: state.fromLanguage
+      fromLanguage: state.toLanguage,
+      toLanguage: state.fromLanguage
     }
   }
 
   if (type === 'SET_FROM_LANGUAGE') {
+    if (state.fromLanguage === action.payload) return state
+
+    const loading = state.fromtext !== ''
+
     return {
       ...state,
-      fromLanguage: action.payload
+      fromLanguage: action.payload,
+      result: '',
+      loading
     }
   }
 
   if (type === 'SET_TO_LANGUAGE') {
+    if (state.toLanguage === action.payload) return state
+    const loading = state.fromtext !== ''
     return {
       ...state,
-      toLanguaje: action.payload
+      toLanguage: action.payload,
+      result: '',
+      loading
     }
   }
 
   if (type === 'SET_FROM_TEXT') {
+    const loading = state.fromtext !== ''
     return {
       ...state,
-      loading: true,
       fromtext: action.payload,
-      result: ''
+      result: '',
+      loading
     }
   }
   if (type === 'SET_RESULT') {
@@ -63,7 +74,7 @@ const reducer = (state: State, action: Action) => {
 }
 
 export function useStore () {
-  const [{ fromLanguage, toLanguaje, fromtext, result, loading }, dispatch] =
+  const [{ fromLanguage, toLanguage, fromtext, result, loading }, dispatch] =
     useReducer(reducer, initialState)
 
   const interchangeLanguages = () => {
@@ -85,7 +96,7 @@ export function useStore () {
 
   return {
     fromLanguage,
-    toLanguaje,
+    toLanguage,
     fromtext,
     result,
     loading,
@@ -94,5 +105,6 @@ export function useStore () {
     setToLanguage,
     setFromText,
     setResult
+
   }
 }

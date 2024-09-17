@@ -1,44 +1,68 @@
+import { useEffect } from 'react'
 import './App.css'
 import { ArrowIcon } from './components/Icon'
 import { LanguageSelector } from './components/LanguageSelector'
+import { TextArea } from './components/TextArea'
 
 import { AUTO_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
 import { SectionType } from './types.d'
+import { translate } from './services/translate'
 
 function App () {
   const {
     fromLanguage,
     setFromLanguage,
-    toLanguaje,
+    toLanguage,
     setToLanguage,
-    interchangeLanguages
+    interchangeLanguages,
+    fromtext,
+    setFromText,
+    result,
+    setResult,
+    loading
+
   } = useStore()
+
+  useEffect(() => {
+    if (fromtext === '') return
+
+    translate({ fromLanguage, toLanguage, text: fromtext })
+      .then(result => {
+        if (result == null) return
+
+        setResult(result)
+      })
+      .catch(() => {
+        setResult('Error')
+      })
+    /*   return () => {
+    second
+  } */
+  }, [fromtext, fromLanguage, toLanguage])
 
   return (
     <>
       <nav className="pt-10 px-5 flex justify-center">
-        <span className="text-blue-500 text-2xl font-medium">
+        <h2 className="text-blue-500 text-2xl font-medium">
           Google Translate
-        </span>
+        </h2>
       </nav>
       <main>
         <section className="flex justify-center my-5">
           <article className="flex gap-4">
             <div className="">
-              <form className="flex flex-col gap-3">
+              <form className="flex flex-col gap-2">
                 <LanguageSelector
                   type={SectionType.From}
                   value={fromLanguage}
                   onChange={setFromLanguage}
                 />
-                <textarea
-                  id="romLanguage"
-                  rows={4}
-                  className="block p-2.5 w-full text-sm text-gray-900 rounded-lg   focus:ring-blue-500  dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 outline-none"
-                  placeholder="Enter the text"
-                  autoFocus
-                ></textarea>
+                <TextArea
+                  type={SectionType.From}
+                  value={fromtext}
+                  onChange={setFromText}
+                ></TextArea>
               </form>
             </div>
 
@@ -50,19 +74,18 @@ function App () {
               <ArrowIcon />
             </button>
             <div className="">
-              <form className="flex flex-col gap-3">
+              <form className="flex flex-col gap-2">
                 <LanguageSelector
                   onChange={setToLanguage}
                   type={SectionType.To}
-                  value={toLanguaje}
+                  value={toLanguage}
                 />
-                <textarea
-                  id="romLanguage"
-                  rows={4}
-                  className="block p-2.5 w-full text-sm text-gray-400 bg-gray-300 rounded-lg     dark:bg-gray-700  dark:placeholder-gray-400 dark:text-white outline-none disabled"
-                  disabled
-                  placeholder="Translation"
-                ></textarea>
+                <TextArea
+                  loading={loading}
+                  value={result}
+                  onChange={setResult}
+                  type={SectionType.To}
+                ></TextArea>
               </form>
             </div>
           </article>

@@ -6,7 +6,7 @@ export type FromLanguage = Language | AutoLanguage
 
 export interface State {
   fromLanguage: FromLanguage
-  toLanguaje: Language
+  toLanguage: Language
   fromtext: string
   result: string
   loading: boolean
@@ -22,4 +22,10 @@ export type Action =
 export enum SectionType {
   From = 'from',
   To = 'to'
+}
+
+export enum ChatCompletionRequestMessage {
+  Chatbot = 'CHATBOT',
+  User = 'USER',
+  Tool = 'TOOL'
 }
