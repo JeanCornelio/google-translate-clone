@@ -19,10 +19,6 @@ export async function translate ({
   if (fromLanguage === toLanguage) return text
   const messages = [
     {
-      role: ChatCompletionRequestMessage.Tool,
-      message: 'You are a AI that translates text. You receive a text from the user. Do not answer, just translate the text. The original language is surrounded by `{{` and `}}` You can also recive {{auto}} which means that you have to detect the language. The language you translate to is surrounded by `[[`and`]]`. '
-    },
-    {
       role: ChatCompletionRequestMessage.User,
       message: 'Hola mundo {{Español}} [[English]]'
     },
@@ -45,14 +41,6 @@ export async function translate ({
     {
       role: ChatCompletionRequestMessage.Chatbot,
       message: 'Buenos días,  ¿Cómo estás?'
-    },
-    {
-      role: ChatCompletionRequestMessage.User,
-      message: 'quelle heure est-il? {{auto}} [[Italiano]]'
-    },
-    {
-      role: ChatCompletionRequestMessage.Chatbot,
-      message: 'Che ore sono?'
     }
   ]
 
@@ -64,7 +52,8 @@ export async function translate ({
     chatHistory: [
       ...messages
     ],
-    message: `${text} {{${fromCode}}} [[${toCode}]]`
+    message: `${text} {{${fromCode}}} [[${toCode}]]`,
+    preamble: 'You are a AI that translates text. You receive a text from the user. Do not answer, just translate the text. The original language is surrounded by `{{` and `}}` You can also recive {{auto}} which means that you have to detect the language. The language you translate to is surrounded by `[[`and`]]`, Do not connect or scape.'
   })
   return chat.text
 }

@@ -8,6 +8,7 @@ import { AUTO_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
 import { SectionType } from './types.d'
 import { translate } from './services/translate'
+import { useDebounce } from './hooks/useDebounce'
 
 function App () {
   const {
@@ -24,10 +25,12 @@ function App () {
 
   } = useStore()
 
-  useEffect(() => {
-    if (fromtext === '') return
+  const debouncedFromText = useDebounce(fromtext, 300)
 
-    translate({ fromLanguage, toLanguage, text: fromtext })
+  useEffect(() => {
+    if (debouncedFromText === '') return
+
+    translate({ fromLanguage, toLanguage, text: debouncedFromText })
       .then(result => {
         if (result == null) return
 
@@ -39,7 +42,7 @@ function App () {
     /*   return () => {
     second
   } */
-  }, [fromtext, fromLanguage, toLanguage])
+  }, [debouncedFromText, fromLanguage, toLanguage])
 
   return (
     <>
@@ -49,9 +52,9 @@ function App () {
         </h2>
       </nav>
       <main>
-        <section className="flex justify-center my-5">
-          <article className="flex gap-4">
-            <div className="">
+        <section className="  my-5">
+          <article className="flex gap-4 w-full justify-center">
+            <div className="w-3/12">
               <form className="flex flex-col gap-2">
                 <LanguageSelector
                   type={SectionType.From}
@@ -73,7 +76,7 @@ function App () {
             >
               <ArrowIcon />
             </button>
-            <div className="">
+            <div className="w-3/12">
               <form className="flex flex-col gap-2">
                 <LanguageSelector
                   onChange={setToLanguage}

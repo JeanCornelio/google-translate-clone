@@ -21,11 +21,13 @@ const reducer = (state: State, action: Action) => {
 
   if (type === 'INTERCHANGE_LANGUAGES') {
     if (state.fromLanguage === AUTO_LANGUAGE) return state
-
+    const loading = state.fromtext !== ''
     return {
       ...state,
       fromLanguage: state.toLanguage,
-      toLanguage: state.fromLanguage
+      toLanguage: state.fromLanguage,
+      result: '',
+      loading
     }
   }
 
