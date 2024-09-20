@@ -16,7 +16,6 @@ const initialState = {
 }
 
 const reducer = (state: State, action: Action) => {
-  console.log(state, action)
   const { type } = action
 
   if (type === 'INTERCHANGE_LANGUAGES') {

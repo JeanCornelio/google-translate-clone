@@ -8,7 +8,8 @@ export const SUPPORTED_LANGUAGES = {
 export const VOICE_FOR_LANGUAGE = {
   en: 'en-GB',
   es: 'es-MX',
-  de: 'de-DE'
+  de: 'de-DE',
+  it: 'it-IT'
 }
 
 export const AUTO_LANGUAGE = 'auto'

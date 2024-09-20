@@ -1,14 +1,20 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import './App.css'
-import { ArrowIcon, ClipboardIcon, SpeakerIcon } from './components/Icon'
+import {
+  ArrowIcon,
+  ClipboardIcon,
+  MicrophoneIcon,
+  SpeakerIcon
+} from './components/Icon'
 import { LanguageSelector } from './components/LanguageSelector'
 import { TextArea } from './components/TextArea'
 
 import { AUTO_LANGUAGE, VOICE_FOR_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
-import { SectionType } from './types.d'
+import { type Language, SectionType } from './types.d'
 import { translate } from './services/translate'
 import { useDebounce } from './hooks/useDebounce'
+import { useTss } from './hooks/useTss'
 
 function App () {
   const {
@@ -24,8 +30,9 @@ function App () {
     loading
   } = useStore()
 
+  const buttonRef = useRef(null)
+  const { handleTss } = useTss({ toLanguage, setFromText, buttonRef })
   const debouncedFromText = useDebounce(fromtext, 300)
-
   useEffect(() => {
     if (debouncedFromText === '') return
 
@@ -38,16 +45,13 @@ function App () {
       .catch(() => {
         setResult('Error')
       })
-    /*   return () => {
-    second
-  } */
   }, [debouncedFromText, fromLanguage, toLanguage])
   const handleCLipboard = () => {
-    navigator.clipboard.writeText(result).catch(() => {})
+    navigator.clipboard.writeText(result as string).catch(() => {})
   }
   const handleSpeak = () => {
-    const utterance = new SpeechSynthesisUtterance(result)
-    utterance.lang = VOICE_FOR_LANGUAGE[toLanguage]
+    const utterance = new SpeechSynthesisUtterance(result as string)
+    utterance.lang = VOICE_FOR_LANGUAGE[toLanguage as Language]
     speechSynthesis.speak(utterance)
   }
 
@@ -66,11 +70,21 @@ function App () {
                   value={fromLanguage}
                   onChange={setFromLanguage}
                 />
-                <TextArea
-                  type={SectionType.From}
-                  value={fromtext}
-                  onChange={setFromText}
-                ></TextArea>
+                <div className="relative">
+                  <TextArea
+                    type={SectionType.From}
+                    value={fromtext}
+                    onChange={setFromText}
+                  ></TextArea>
+                  <button
+                    className="absolute left-2  bottom-2"
+                    ref={buttonRef}
+                    type="button"
+                    onClick={handleTss}
+                  >
+                    <MicrophoneIcon />
+                  </button>
+                </div>
               </form>
             </div>
 
