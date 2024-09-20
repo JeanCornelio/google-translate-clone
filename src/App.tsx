@@ -1,10 +1,10 @@
 import { useEffect } from 'react'
 import './App.css'
-import { ArrowIcon } from './components/Icon'
+import { ArrowIcon, ClipboardIcon, SpeakerIcon } from './components/Icon'
 import { LanguageSelector } from './components/LanguageSelector'
 import { TextArea } from './components/TextArea'
 
-import { AUTO_LANGUAGE } from './constants'
+import { AUTO_LANGUAGE, VOICE_FOR_LANGUAGE } from './constants'
 import { useStore } from './hooks/useStore'
 import { SectionType } from './types.d'
 import { translate } from './services/translate'
@@ -22,7 +22,6 @@ function App () {
     result,
     setResult,
     loading
-
   } = useStore()
 
   const debouncedFromText = useDebounce(fromtext, 300)
@@ -31,7 +30,7 @@ function App () {
     if (debouncedFromText === '') return
 
     translate({ fromLanguage, toLanguage, text: debouncedFromText })
-      .then(result => {
+      .then((result) => {
         if (result == null) return
 
         setResult(result)
@@ -43,13 +42,19 @@ function App () {
     second
   } */
   }, [debouncedFromText, fromLanguage, toLanguage])
+  const handleCLipboard = () => {
+    navigator.clipboard.writeText(result).catch(() => {})
+  }
+  const handleSpeak = () => {
+    const utterance = new SpeechSynthesisUtterance(result)
+    utterance.lang = VOICE_FOR_LANGUAGE[toLanguage]
+    speechSynthesis.speak(utterance)
+  }
 
   return (
     <>
       <nav className="pt-10 px-5 flex justify-center">
-        <h2 className="text-blue-500 text-2xl font-medium">
-          Google Translate
-        </h2>
+        <h2 className="text-blue-500 text-2xl font-medium">Google Translate</h2>
       </nav>
       <main>
         <section className="  my-5">
@@ -83,12 +88,22 @@ function App () {
                   type={SectionType.To}
                   value={toLanguage}
                 />
-                <TextArea
-                  loading={loading}
-                  value={result}
-                  onChange={setResult}
-                  type={SectionType.To}
-                ></TextArea>
+                <div className="relative">
+                  <TextArea
+                    loading={loading}
+                    value={result}
+                    onChange={setResult}
+                    type={SectionType.To}
+                  ></TextArea>
+                  <div className="absolute left-2  bottom-2 flex gap-3 ">
+                    <button type="button" onClick={handleCLipboard}>
+                      <ClipboardIcon />
+                    </button>
+                    <button type="button" onClick={handleSpeak}>
+                      <SpeakerIcon />
+                    </button>
+                  </div>
+                </div>
               </form>
             </div>
           </article>

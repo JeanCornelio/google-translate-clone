@@ -27,7 +27,7 @@ export const TextArea = ({ type, loading, onChange, value }: Props) => {
   return (
     <textarea
       id="romLanguage"
-      rows={4}
+      rows={8}
       className={style}
       disabled={type === SectionType.To}
       placeholder={getPlaceholder({ type, loading })}
